@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SOC Analyst AI — Presentation Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0b0f1a;
+  color: #dce8f8;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ── Page layout ── */
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  padding: 14mm 16mm;
+  background: #0b0f1a;
+  page-break-after: always;
+  position: relative;
+  overflow: hidden;
+}
+.page:last-child { page-break-after: avoid; }
+
+@media print {
+  body { background: #0b0f1a; }
+  .page { margin: 0; width: 100%; }
+}
+
+/* ── Grid lines (decorative) ── */
+.page::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    90deg, transparent, transparent 40mm,
+    rgba(0,212,255,0.025) 40mm, rgba(0,212,255,0.025) 40.2mm
+  );
+  pointer-events: none;
+}
+
+/* ── Cover ── */
+.cover-accent { height: 5px; background: linear-gradient(90deg,#00d4ff,#0077aa); border-radius: 3px; margin-bottom: 32px; }
+.cover-shield { font-size: 72px; text-align: center; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(0,212,255,0.5)); }
+.cover-title { font-size: 36px; font-weight: 800; color: #fff; text-align: center; letter-spacing: -1px; margin-bottom: 6px; }
+.cover-title span { color: #00d4ff; }
+.cover-sub { font-size: 14px; color: #7a9ab8; text-align: center; margin-bottom: 6px; }
+.cover-course { font-size: 12px; color: #4a6a8a; font-family: 'JetBrains Mono', monospace; text-align: center; margin-bottom: 36px; }
+.cover-divider { height: 1px; background: rgba(0,212,255,0.3); margin: 20px 0 36px; }
+
+.stats-row { display: flex; gap: 16px; margin-bottom: 32px; }
+.stat-box {
+  flex: 1; background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(0,212,255,0.25); border-radius: 12px;
+  padding: 20px 16px; text-align: center;
+}
+.stat-num { font-size: 40px; font-weight: 800; color: #00d4ff; font-family: 'JetBrains Mono', monospace; line-height: 1; }
+.stat-lbl { font-size: 11px; color: #7a9ab8; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+.info-box {
+  border-radius: 10px; padding: 16px 20px; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 14px;
+}
+.info-box.cyan  { background: rgba(0,212,255,0.07);  border: 1px solid rgba(0,212,255,0.25); }
+.info-box.green { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.28); }
+.info-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+.info-label.cyan  { color: #00d4ff; }
+.info-label.green { color: #34d399; }
+.info-val { font-size: 13px; font-family: 'JetBrains Mono', monospace; color: #dce8f8; }
+.info-icon { font-size: 28px; }
+
+/* ── Section pages ── */
+.page-top-bar {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px; padding: 12px 18px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid rgba(0,212,255,0.3);
+}
+.step-num {
+  background: #00d4ff; color: #0b0f1a;
+  font-size: 13px; font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 5px 10px; border-radius: 6px;
+  min-width: 36px; text-align: center;
+}
+.step-title { font-size: 17px; font-weight: 700; color: #f0f6ff; }
+.step-time { margin-left: auto; font-size: 11px; color: #4a6a8a;
+             font-family: 'JetBrains Mono', monospace; }
+
+/* ── Content blocks ── */
+.content { line-height: 1.7; }
+
+.say-block {
+  background: rgba(52,211,153,0.07); border: 1px solid rgba(52,211,153,0.25);
+  border-left: 4px solid #34d399; border-radius: 8px;
+  padding: 14px 18px; margin: 14px 0; font-size: 13px; color: #a8e6cc;
+  font-style: italic;
+}
+.say-block strong { color: #34d399; font-style: normal; }
+
+.action-block {
+  background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.2);
+  border-left: 4px solid #00d4ff; border-radius: 8px;
+  padding: 12px 18px; margin: 12px 0;
+}
+.action-label { font-size: 9px; font-weight: 700; letter-spacing: 2px;
+                text-transform: uppercase; color: #00d4ff; margin-bottom: 6px; }
+.action-text { font-size: 13px; color: #90d8f8; }
+
+.code-block {
+  background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08);
+  border-left: 4px solid #8b5cf6; border-radius: 8px;
+  padding: 14px 18px; margin: 12px 0;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: #c4b5fd; white-space: pre-wrap; line-height: 1.6;
+}
+
+.point-list { margin: 12px 0; }
+.point-list li {
+  font-size: 13px; color: #b0c8e4; margin-bottom: 6px;
+  padding-left: 8px; list-style: none;
+}
+.point-list li::before { content: '›'; color: #00d4ff; margin-right: 8px; font-weight: 700; }
+
+.note-text { font-size: 12px; color: #7a9ab8; margin: 8px 0; }
+
+/* ── Benchmark table ── */
+.bench-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+.bench-table th {
+  padding: 10px 14px; text-align: left; font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase; color: #7a9ab8;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.03);
+}
+.bench-table td {
+  padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-family: 'JetBrains Mono', monospace; font-size: 13px;
+}
+.td-id   { color: #94a3b8; }
+.td-cnt  { color: #dce8f8; font-weight: 600; }
+.td-acc  { color: #34d399; font-weight: 700; }
+.diff-easy   { color: #6ee7b7; }
+.diff-medium { color: #fcd34d; }
+.diff-hard   { color: #fca5a5; }
+
+/* ── Cheat sheet ── */
+.cheat-table { width: 100%; border-collapse: collapse; margin: 14px 0; }
+.cheat-table th {
+  padding: 9px 14px; font-size: 9px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase; color: #7a9ab8;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.03); text-align: left;
+}
+.cheat-table td {
+  padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 12px;
+}
+.cheat-moment { color: #dce8f8; }
+.cheat-action { color: #00d4ff; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+.highlight-row td { background: rgba(0,212,255,0.06); }
+
+.key-nums { display: flex; gap: 12px; margin-top: 20px; }
+.key-num-box {
+  flex: 1; background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;
+  padding: 12px; text-align: center;
+}
+.key-num-val { font-size: 22px; font-weight: 700; color: #00d4ff;
+               font-family: 'JetBrains Mono', monospace; }
+.key-num-lbl { font-size: 10px; color: #7a9ab8; margin-top: 4px; }
+
+/* ── Why it works ── */
+.why-box {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px; padding: 18px 20px; margin-bottom: 14px;
+}
+.why-num { font-size: 28px; font-weight: 800; color: rgba(0,212,255,0.2);
+           font-family: 'JetBrains Mono', monospace; float: left;
+           margin-right: 14px; line-height: 1; }
+.why-title { font-size: 14px; font-weight: 700; color: #00d4ff; margin-bottom: 6px; }
+.why-body { font-size: 12px; color: #8aaccc; line-height: 1.65; }
+
+/* ── Bottom accent ── */
+.page-footer {
+  position: absolute; bottom: 10mm; left: 16mm; right: 16mm;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-brand { font-size: 10px; color: #2a4a6a; font-family: 'JetBrains Mono', monospace; }
+.footer-page  { font-size: 10px; color: #2a4a6a; font-family: 'JetBrains Mono', monospace; }
+.footer-line  { position: absolute; bottom: 9mm; left: 16mm; right: 16mm;
+                height: 2px; background: linear-gradient(90deg,#00d4ff,transparent); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════ COVER ══ -->
+<div class="page">
+  <div class="cover-accent"></div>
+  <div class="cover-shield">🛡️</div>
+  <div class="cover-title">Autonomous <span>SOC Analyst</span> AI</div>
+  <div class="cover-sub">Tier 1 Security Operations · ReAct + Chain-of-Thought</div>
+  <div class="cover-course">MSCS 670 · Agentic AI · Spring 2026</div>
+  <div class="cover-divider"></div>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-num">65</div>
+      <div class="stat-lbl">Labeled Alerts</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">7</div>
+      <div class="stat-lbl">Investigative Tools</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">100%</div>
+      <div class="stat-lbl">Benchmark Accuracy</div>
+    </div>
+  </div>
+
+  <div class="info-box cyan">
+    <div class="info-icon">💻</div>
+    <div>
+      <div class="info-label cyan">Live Dashboard</div>
+      <div class="info-val">http://localhost:8502</div>
+    </div>
+  </div>
+  <div class="info-box green">
+    <div class="info-icon">📦</div>
+    <div>
+      <div class="info-label green">GitHub Repository</div>
+      <div class="info-val">github.com/almurikhi974/SOC-project</div>
+    </div>
+  </div>
+
+  <div class="footer-line"></div>
+  <div class="page-footer">
+    <span class="footer-brand">SOC Analyst AI · MSCS 670</span>
+    <span class="footer-page">Presentation Guide</span>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════ 01 OPENING ══ -->
+<div class="page">
+  <div class="page-top-bar">
+    <div class="step-num">01</div>
+    <div class="step-title">Opening</div>
+    <div class="step-time">~1 minute</div>
+  </div>
+
+  <div class="content">
+    <div class="say-block">
+      "I built an autonomous AI agent that acts as a Tier 1 SOC analyst.
+      You give it a raw security log, it investigates it like a real analyst would —
+      calling tools, gathering evidence — and delivers a verdict: <strong>Malicious or Benign.</strong>"
+    </div>
+
+    <div class="action-block">
+      <div class="action-label">Action</div>
+      <div class="action-text">Open the dashboard → <strong>http://localhost:8502</strong></div>
+    </div>
+
+    <ul class="point-list">
+      <li>Point to the header — mention it's powered by an LLM with tool-calling</li>
+      <li>Mention the model: <strong style="color:#00d4ff">qwen/qwen-turbo</strong> via OpenRouter API</li>
+      <li>The agent runs fully autonomously — no human in the loop during investigation</li>
+    </ul>
+  </div>
+
+  <div class="footer-line"></div>
+  <div class="page-footer">
+    <span class="footer-brand">SOC Analyst AI · MSCS 670</span>
+    <span class="footer-page">01 / 08</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ 02 ARCHITECTURE ══ -->
+<div class="page">
+  <div class="page-top-bar">
+    <div class="step-num">02</div>
+    <div class="step-title">Explain the Architecture</div>
+    <div class="step-time">~2 minutes</div>
+  </div>
+
+  <div class="content">
+    <div class="action-block">
+      <div class="action-label">Action</div>
+      <div class="action-text">Click the <strong>About</strong> tab in the dashboard</div>
+    </div>
+
+    <div class="say-block">
+      "The agent uses a <strong>ReAct loop</strong> — Reason, Act, Observe — repeated in cycles
+      until it has enough evidence to decide."
+    </div>
+
+    <ul class="point-list">
+      <li>Alert arrives as JSON (IP addresses, log payload, timestamp, service)</li>
+      <li>Agent reads it, forms a hypothesis about what's happening</li>
+      <li>Calls investigative tools one by one to gather evidence</li>
+      <li>Updates its hypothesis after each tool result</li>
+      <li>Once it has <strong style="color:#00d4ff">2+ independent evidence sources</strong> → emits verdict</li>
+    </ul>
+
+    <p class="note-text" style="margin-top:16px;font-weight:600;color:#7a9ab8;">The 7 Investigative Tools:</p>
+    <table class="bench-table" style="margin-top:8px;">
+      <thead><tr><th>Tool</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td class="td-id">verify_ip_reputation</td><td style="color:#b0c8e4;font-family:Inter,sans-serif">Risk score, threat categories, ISP</td></tr>
+        <tr><td class="td-id">decode_payload</td><td style="color:#b0c8e4;font-family:Inter,sans-serif">URL/Base64 decode + 40+ attack signatures</td></tr>
+        <tr><td class="td-id">lookup_known_attack_signature</td><td style="color:#b0c8e4;font-family:Inter,sans-serif">LOLBins, CVEs, EventIDs, hashes</td></tr>
+        <tr><td class="td-id">get_user_activity_history</td><td style="color:#b0c8e4;font-family:Inter,sans-serif">Login history, auth method anomalies</td></tr>
+        <tr><td class="td-id">analyze_network_traffic_context</td><td style="color:#b0c8e4;font-family:Inter,sans-serif">Volume baselines, C2 IPs, off-hours</td></tr>
+        <tr><td class="td-id">cve_lookup</td><td style="color:#b0c8e4;font-family:Inter,sans-serif">CVE details by ID or service + version</td></tr>
+        <tr><td class="td-id">get_geolocation_and_asn</td><td style="color:#b0c8e4;font-family:Inter,sans-serif">Country, ASN type, geofence violations</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer-line"></div>
+  <div class="page-footer">
+    <span class="footer-brand">SOC Analyst AI · MSCS 670</span>
+    <span class="footer-page">02 / 08</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ 03 EASY DEMO ══ -->
+<div class="page">
+  <div class="page-top-bar">
+    <div class="step-num">03</div>
+    <div class="step-title">Live Demo — Easy Malicious Alert</div>
+    <div class="step-time">~2 minutes</div>
+  </div>
+
+  <div class="content">
+    <div class="action-block">
+      <div class="action-label">Action</div>
+      <div class="action-text">
+        Investigate tab → <strong>Quick Sample</strong> → select <strong>"SQL Injection (Malicious)"</strong> → click <strong>Investigate Sample</strong>
+      </div>
+    </div>
+
+    <div class="say-block">
+      "Watch the agent think in real time. It decodes the URL-encoded payload,
+      detects the SQL injection pattern, checks the source IP reputation,
+      finds it's a known scanner — then delivers the verdict."
+    </div>
+
+    <p class="note-text" style="margin-top:16px;font-weight:600;color:#7a9ab8;">Point out while running:</p>
+    <ul class="point-list">
+      <li>Each step expanding in the trace: 💭 Reasoning → 🔓 Tool Call → 📋 Observation</li>
+      <li>The <strong style="color:#f87171">red MALICIOUS</strong> verdict card appearing after completion</li>
+      <li>The circular confidence gauge showing percentage</li>
+      <li>The elapsed timer — shows how fast the agent works</li>
+      <li>The reasoning box explaining <em>why</em> it's malicious in plain English</li>
+    </ul>
+
+    <div class="say-block" style="margin-top:16px;">
+      "Notice it didn't just flag it because the IP looks suspicious —
+      it gathered multiple signals: the decoded payload, the attack tool signature,
+      and the IP reputation. That's the <strong>two-signal minimum</strong> at work."
+    </div>
+  </div>
+
+  <div class="footer-line"></div>
+  <div class="page-footer">
+    <span class="footer-brand">SOC Analyst AI · MSCS 670</span>
+    <span class="footer-page">03 / 08</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ 04 HARD DEMO ══ -->
+<div class="page">
+  <div class="page-top-bar">
+    <div class="step-num">04</div>
+    <div class="step-title">Live Demo — Hard / Subtle Alert</div>
+    <div class="step-time">~3 minutes</div>
+  </div>
+
+  <div class="content">
+    <div class="action-block">
+      <div class="action-label">Action</div>
+      <div class="action-text">Investigate tab → <strong>Single Alert (JSON)</strong> → paste this:</div>
+    </div>
+
+    <div class="code-block">{
+  "alert_id": "HARD-005",
+  "timestamp": "2024-01-15T14:00:00Z",
+  "source_ip": "192.168.1.45",
+  "destination_ip": "8.8.8.8",
+  "service": "dns_over_https",
+  "raw_log": "POST https://dns.google/dns-query HTTP/2 - 200 OK - 450 bytes - every 30 seconds for 2 hours"
+}</div>
+
+    <div class="say-block">
+      "This looks completely legitimate — DNS over HTTPS to Google's public DNS.
+      But the agent notices the <strong>450-byte requests every exactly 30 seconds for 2 hours.</strong>
+      That's a beacon pattern. C2 traffic disguised as normal DNS.
+      It correctly flags it as <strong>Malicious.</strong>"
+    </div>
+
+    <ul class="point-list">
+      <li>The destination IP (8.8.8.8) and service (Google DoH) are both trusted</li>
+      <li>A human analyst could easily miss this without looking at timing patterns</li>
+      <li>The agent picks up the constant-interval beaconing rule from its behavioral guidelines</li>
+      <li>This is HARD-005 from the benchmark — one of the most deceptive cases</li>
+    </ul>
+  </div>
+
+  <div class="footer-line"></div>
+  <div class="page-footer">
+    <span class="footer-brand">SOC Analyst AI · MSCS 670</span>
+    <span class="footer-page">04 / 08</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ 05 BENCHMARK ══ -->
+<div class="page">
+  <div class="page-top-bar">
+    <div class="step-num">05</div>
+    <div class="step-title">Benchmark Results</div>
+    <div class="step-time">~2 minutes</div>
+  </div>
+
+  <div class="content">
+    <div class="action-block">
+      <div class="action-label">Action</div>
+      <div class="action-text">Click the <strong>Benchmark</strong> tab — point to the three accuracy rings</div>
+    </div>
+
+    <div class="say-block">
+      "I tested the agent against 65 labeled security alerts across three difficulty levels."
+    </div>
+
+    <table class="bench-table">
+      <thead>
+        <tr><th>Difficulty</th><th>Alerts</th><th>Labels</th><th>Correct</th><th>Accuracy</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="diff-easy">● EASY</span></td>
+          <td class="td-cnt">20</td>
+          <td style="color:#8aaccc;font-family:Inter,sans-serif;font-size:12px">10 Benign · 10 Malicious</td>
+          <td class="td-cnt">20 / 20</td>
+          <td class="td-acc">100%</td>
+        </tr>
+        <tr>
+          <td><span class="diff-medium">● MEDIUM</span></td>
+          <td class="td-cnt">20</td>
+          <td style="color:#8aaccc;font-family:Inter,sans-serif;font-size:12px">8 Benign · 12 Malicious</td>
+          <td class="td-cnt">20 / 20</td>
+          <td class="td-acc">100%</td>
+        </tr>
+        <tr>
+          <td><span class="diff-hard">● HARD</span></td>
+          <td class="td-cnt">25</td>
+          <td style="color:#8aaccc;font-family:Inter,sans-serif;font-size:12px">5 Benign · 20 Malicious</td>
+          <td class="td-cnt">25 / 25</td>
+          <td class="td-acc">100%</td>
+        </tr>
+        <tr style="border-top:2px solid rgba(0,212,255,0.2)">
+          <td style="color:#f0f6ff;font-weight:700">TOTAL</td>
+          <td style="color:#00d4ff;font-weight:700">65</td>
+          <td style="color:#8aaccc;font-family:Inter,sans-serif;font-size:12px">23 Benign · 42 Malicious</td>
+          <td style="color:#00d4ff;font-weight:700">65 / 65</td>
+          <td style="color:#34d399;font-weight:800;font-size:16px">100%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="action-block" style="margin-top:14px">
+      <div class="action-label">Action</div>
+      <div class="action-text">Click on any Hard-tier card to show <strong>ground truth explanation</strong> vs <strong>agent reasoning</strong> side by side</div>
+    </div>
+  </div>
+
+  <div class="footer-line"></div>
+  <div class="page-footer">
+    <span class="footer-brand">SOC Analyst AI · MSCS 670</span>
+    <span class="footer-page">05 / 08</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ 06 WHY IT WORKS ══ -->
+<div class="page">
+  <div class="page-top-bar">
+    <div class="step-num">06</div>
+    <div class="step-title">Why It Works</div>
+    <div class="step-time">~1 minute</div>
+  </div>
+
+  <div class="content">
+    <div class="say-block">"Three things make this hit 100%:"</div>
+
+    <div class="why-box">
+      <div class="why-num">1</div>
+      <div class="why-title">Two-Signal Minimum</div>
+      <div class="why-body">
+        The system prompt requires at least 2 independent evidence sources before issuing
+        a high-confidence verdict. This eliminates false positives — the agent can't panic
+        at one suspicious indicator alone.
+      </div>
+    </div>
+
+    <div class="why-box">
+      <div class="why-num">2</div>
+      <div class="why-title">Explicit Behavioral Rules</div>
+      <div class="why-body">
+        Domain-specific rules baked into the prompt for tricky edge cases:<br>
+        IMDSv1 vs IMDSv2 SSRF · EventID 1102 log clearing · LOLBin abuse
+        (certutil, MSBuild, rundll32) · C2 beaconing patterns · Admin share lateral movement.
+      </div>
+    </div>
+
+    <div class="why-box">
+      <div class="why-num">3</div>
+      <div class="why-title">12 Few-Shot Examples</div>
+      <div class="why-body">
+        Domain-specific examples embedded in the system prompt anchor the correct
+        reasoning style. They show the model exactly how to think through each
+        alert type — not just what to conclude, but how to get there.
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-line"></div>
+  <div class="page-footer">
+    <span class="footer-brand">SOC Analyst AI · MSCS 670</span>
+    <span class="footer-page">06 / 08</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ 07 CLOSING ══ -->
+<div class="page">
+  <div class="page-top-bar">
+    <div class="step-num">07</div>
+    <div class="step-title">Closing</div>
+    <div class="step-time">~30 seconds</div>
+  </div>
+
+  <div class="content">
+    <div class="say-block">
+      "The full code is on GitHub:<br>
+      <strong>github.com/almurikhi974/SOC-project</strong>"
+    </div>
+
+    <div class="say-block">
+      "Anyone can clone it, run:<br>
+      <span style="font-family:'JetBrains Mono',monospace;color:#00d4ff">pip install -r requirements.txt</span><br>
+      <span style="font-family:'JetBrains Mono',monospace;color:#00d4ff">streamlit run app.py</span><br>
+      and the dashboard is live."
+    </div>
+
+    <div class="key-nums">
+      <div class="key-num-box"><div class="key-num-val">65</div><div class="key-num-lbl">Labeled Alerts</div></div>
+      <div class="key-num-box"><div class="key-num-val">7</div><div class="key-num-lbl">Tools</div></div>
+      <div class="key-num-box"><div class="key-num-val">100%</div><div class="key-num-lbl">Accuracy</div></div>
+      <div class="key-num-box"><div class="key-num-val">ReAct</div><div class="key-num-lbl">Architecture</div></div>
+    </div>
+  </div>
+
+  <div class="footer-line"></div>
+  <div class="page-footer">
+    <span class="footer-brand">SOC Analyst AI · MSCS 670</span>
+    <span class="footer-page">07 / 08</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ 08 CHEAT SHEET ══ -->
+<div class="page">
+  <div class="page-top-bar">
+    <div class="step-num">08</div>
+    <div class="step-title">Quick Reference — Dashboard Cheat Sheet</div>
+    <div class="step-time">Keep this page open during the demo</div>
+  </div>
+
+  <div class="content">
+    <div class="info-box cyan" style="margin-bottom:18px">
+      <div class="info-icon">💻</div>
+      <div>
+        <div class="info-label cyan">Dashboard URL</div>
+        <div class="info-val">http://localhost:8502</div>
+      </div>
+    </div>
+
+    <table class="cheat-table">
+      <thead>
+        <tr><th>Moment in presentation</th><th>Where to click</th></tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td class="cheat-moment">Show the architecture diagram</td>
+          <td class="cheat-action">About tab</td>
+        </tr>
+        <tr>
+          <td class="cheat-moment">Easy malicious demo (SQL injection)</td>
+          <td class="cheat-action">Investigate → Quick Sample → SQL Injection</td>
+        </tr>
+        <tr class="highlight-row">
+          <td class="cheat-moment">Hard / subtle demo (C2 beaconing)</td>
+          <td class="cheat-action">Investigate → Single JSON → paste HARD-005</td>
+        </tr>
+        <tr>
+          <td class="cheat-moment">Show 100% accuracy</td>
+          <td class="cheat-action">Benchmark tab → accuracy rings</td>
+        </tr>
+        <tr class="highlight-row">
+          <td class="cheat-moment">Show per-alert reasoning detail</td>
+          <td class="cheat-action">Benchmark tab → click any alert card</td>
+        </tr>
+        <tr>
+          <td class="cheat-moment">Run all 65 alerts live</td>
+          <td class="cheat-action">Benchmark tab → ▶ Run Full Benchmark</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="key-nums" style="margin-top:20px">
+      <div class="key-num-box"><div class="key-num-val">65/65</div><div class="key-num-lbl">Benchmark Score</div></div>
+      <div class="key-num-box"><div class="key-num-val">7</div><div class="key-num-lbl">Tools</div></div>
+      <div class="key-num-box"><div class="key-num-val">12</div><div class="key-num-lbl">Few-shot Examples</div></div>
+      <div class="key-num-box"><div class="key-num-val">8</div><div class="key-num-lbl">Max Iterations</div></div>
+    </div>
+  </div>
+
+  <div class="footer-line"></div>
+  <div class="page-footer">
+    <span class="footer-brand">SOC Analyst AI · MSCS 670</span>
+    <span class="footer-page">08 / 08</span>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+# Secrets
+.env
+API-key.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+
+# Cached benchmark results (regenerated on run)
+benchmark_results.json
+
+# Windows Zone.Identifier files
+*:Zone.Identifier
+
+# Streamlit
+.streamlit/
+
+# VS Code / IDE
+.vscode/
+.idea/
+
+# Claude internal
+.claude/

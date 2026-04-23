@@ -1,6 +1,7 @@
-# Secrets
+# Secrets — never commit real keys
 .env
 API-key.txt
+.streamlit/secrets.toml
 
 # Python
 __pycache__/
@@ -14,8 +15,8 @@ benchmark_results.json
 # Windows Zone.Identifier files
 *:Zone.Identifier
 
-# Streamlit
-.streamlit/
+# Streamlit — include config but never real secrets
+.streamlit/secrets.toml
 
 # VS Code / IDE
 .vscode/

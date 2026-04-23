@@ -156,8 +156,23 @@ Hard cases include: Golden Ticket attacks, LOLBin abuse (certutil, MSBuild, rund
 
 ---
 
+## Deploy to Streamlit Cloud (share with anyone — no install needed)
+
+1. Fork this repo on GitHub
+2. Go to **https://share.streamlit.io** → sign in with GitHub → **New app**
+3. Select your fork, branch `master`, file `app.py`
+4. Click **Advanced settings → Secrets** and paste:
+   ```toml
+   OPENROUTER_API_KEY = "sk-or-your-key-here"
+   ```
+5. Click **Deploy**
+
+Your app gets a public URL like `https://yourname-soc-project.streamlit.app` — anyone can open it in a browser with no installation required.
+
+---
+
 ## Requirements
 
 - Python 3.10+
-- OpenRouter API key (free) **or** Anthropic API key
+- OpenRouter API key (free at https://openrouter.ai) **or** Anthropic API key
 - ~500MB disk for packages

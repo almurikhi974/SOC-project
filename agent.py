@@ -29,6 +29,23 @@ from tools import ALL_TOOLS, TOOL_MAP
 load_dotenv()
 
 # ---------------------------------------------------------------------------
+# Streamlit Cloud secrets support
+# Load keys from st.secrets if running on Streamlit Cloud and not already set
+# ---------------------------------------------------------------------------
+
+def _load_streamlit_secrets() -> None:
+    """Copy Streamlit secrets into env vars so the rest of the code works unchanged."""
+    try:
+        import streamlit as st
+        for key in ("OPENROUTER_API_KEY", "ANTHROPIC_API_KEY"):
+            if key in st.secrets and not os.getenv(key):
+                os.environ[key] = st.secrets[key]
+    except Exception:
+        pass  # Not running in Streamlit context — skip silently
+
+_load_streamlit_secrets()
+
+# ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
 
@@ -55,7 +72,8 @@ def _detect_api_mode() -> str:
     if os.getenv("OPENROUTER_API_KEY", ""):
         return "openrouter"
     raise EnvironmentError(
-        "No valid API key found. Set ANTHROPIC_API_KEY (sk-ant-...) or OPENROUTER_API_KEY in .env"
+        "No valid API key found. Set OPENROUTER_API_KEY or ANTHROPIC_API_KEY "
+        "in .env (local) or Streamlit Cloud Secrets (deployed)."
     )
 
 
